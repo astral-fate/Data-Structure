@@ -1,1 +1,290 @@
 
+public class MSLL<T> {
+    private MSLLNode<T> head;
+
+    public MSLL() {
+        head = null;
+       
+    }
+
+    public void addToMSLLHead(String key) {
+        MSLLNode<T> newNode = new MSLLNode<T>(key, new SLL<T>(), null);
+        if (head == null) {
+            head = newNode;
+        } else {
+            MSLLNode<T> existingNode = findMSLLNode(key);
+            if (existingNode != null) {
+                throw new IllegalArgumentException("Node with key already exists.");
+            }
+            newNode.setNext(head);
+            head = newNode;
+        }
+    }
+
+    public void addToMSLLTail(String key) {
+        MSLLNode<T> newNode = new MSLLNode<T>(key, new SLL<T>(), null);
+        if (head == null) {
+            head = newNode;
+        } else {
+            MSLLNode<T> existingNode = findMSLLNode(key);
+            if (existingNode != null) {
+                throw new IllegalArgumentException("Node with key already exists.");
+            }
+            MSLLNode<T> current = head;
+            while (current.getNext() != null) {
+                current = current.getNext();
+            }
+            current.setNext(newNode);
+        }
+    }
+
+    public void deleteFromMSLL(String key) {
+        if (head == null) {
+            throw new IllegalArgumentException("MSLL is empty.");
+        }
+
+        if (head.getKey().equals(key)) {
+            head = head.getNext();
+            return;
+        }
+
+        MSLLNode<T> current = head;
+        while (current.getNext() != null) {
+            if (current.getNext().getKey().equals(key)) {
+                current.setNext(current.getNext().getNext());
+                return;
+            }
+            current = current.getNext();
+        }
+
+        throw new IllegalArgumentException("Node with key does not exist.");
+    }
+
+    public boolean isInMSLList(String key) {
+        return findMSLLNode(key) != null;
+    }
+
+    public void makeCitySublistEmpty(String key) {
+        MSLLNode<T> node = findMSLLNode(key);
+        if (node == null) {
+            throw new IllegalArgumentException("Node with key does not exist.");
+        }
+        node.setList(new SLL<>());
+    }
+
+    public void deleteCitySublist(String key) {
+        MSLLNode<T> current = head;
+        MSLLNode<T> prev = null;
+
+        while (current != null) {
+            if (current.getKey().equals(key)) {
+                if (prev != null) {
+                    prev.setNext(current.getNext());
+                } else {
+                    head = current.getNext();
+                }
+                return;
+            }
+            prev = current;
+            current = current.getNext();
+        }
+
+        throw new IllegalArgumentException("Node with key does not exist.");
+    }
+
+    public void displayCitySublist(String key) {
+        MSLLNode<T> node = findMSLLNode(key);
+        if (node == null) {
+            throw new IllegalArgumentException("Node with key does not exist.");
+        }
+        SLL<T> sublist = node.getList();
+        sublist.displayList();
+    }
+
+
+    public void addCityToSublistAtRear(T city) {
+        String cityName = getCityName(city);
+        String key = getKeyFromCityName(cityName);
+
+        MSLLNode<T> node = findMSLLNode(key);
+        if (node == null) {
+            node = new MSLLNode<T>(key, new SLL<T>(), null);
+            addToMSLLTail(key);
+        } else {
+            SLL<T> sublist = node.getList();
+            if (sublist.search(city)) {
+                throw new IllegalArgumentException("City already exists in the sublist.");
+            }
+        }
+
+        node.getList().addToTail(city);
+    }
+
+    public void addCityToSublistAtPosition(City city, int position) {
+        MSLLNode<T> node = findMSLLNode(key);
+        if (node == null) {
+            node = new MSLLNode<T>(key, new SLL<T>(), null);
+            addToMSLLTail(key);
+        } else {
+            SLL<T> sublist = node.getList();
+            if (sublist.search(city)) {
+                throw new IllegalArgumentException("City already exists in the sublist.");
+            }
+        }
+
+        node.getList().insertAtPosition(city, position);
+    }
+
+
+    public void deleteCityFromSublist(T city) {
+        MSLLNode<T> current = head;
+        while (current != null) {
+            SLL<T> sublist = current.getList();
+            if (sublist.delete(city)) {
+                return;
+            }
+            current = current.getNext();
+        }
+        throw new IllegalArgumentException("City does not exist in any sublist.");
+    }
+
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        double earthRadius = 6371; // Radius of the Earth in kilometers
+
+        double deltaLatitude = Math.toRadians(lat2 - lat1);
+        double deltaLongitude = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(deltaLongitude / 2) * Math.sin(deltaLongitude / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double distance = earthRadius * c;
+        return distance;
+    }
+
+    public double getDistance(String city1, String city2) {
+        MSLLNode<T> node1 = findMSLLNodeStartingWith(city1);
+        MSLLNode<T> node2 = findMSLLNodeStartingWith(city2);
+
+        if (node1 == null || node2 == null) {
+            throw new IllegalArgumentException("City does not exist in sublists.");
+        }
+
+        T cityObj1 = node1.getList().getCity(city1);
+        T cityObj2 = node2.getList().getCity(city2);
+
+        if (cityObj1 == null || cityObj2 == null) {
+            throw new IllegalArgumentException("City does not exist in sublists.");
+        }
+
+        double lat1 = getLatitude(cityObj1);
+        double lon1 = getLongitude(cityObj1);
+        double lat2 = getLatitude(cityObj2);
+        double lon2 = getLongitude(cityObj2);
+
+        double distance = calculateDistance(lat1, lon1, lat2, lon2);
+        return distance;
+    }
+
+    public boolean searchForCity(String city) {
+        MSLLNode<T> current = head;
+        while (current != null) {
+            SLL<T> sublist = current.getList();
+            if (sublist.search((T) city)) {
+                return true;
+            }
+            current = current.getNext();
+        }
+
+        // Check if the city is in the city database
+        CityDatabase cityDatabase = new CityDatabase();
+        if (cityDatabase.containsCity(city)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Helper methods
+
+    private MSLLNode<T> findMSLLNode(String key) {
+        MSLLNode<T> current = head;
+        while (current != null) {
+            if (current.getKey().equals(key)) {
+                return current;
+            }
+            current = current.getNext();
+        }
+        return null;
+    }
+
+    private MSLLNode<T> findMSLLNodeStartingWith(String prefix) {
+        MSLLNode<T> current = head;
+        while (current != null) {
+            if (current.getKey().startsWith(prefix)) {
+                return current;
+            }
+            current = current.getNext();
+        }
+        return null;
+    }
+
+    private String getCityName(T city) {
+        // Assuming the City class has a 'getCityName' method
+        // Modify this according to your City class implementation
+        return ((City) city).getCityName();
+    }
+
+    private String getKeyFromCityName(String cityName) {
+        return cityName.substring(0, 1);
+    }
+
+    private double getLatitude(T city) {
+        // Assuming the City class has a 'getLatitude' method
+        // Modify this according to your City class implementation
+        return ((City) city).getLatitude();
+    }
+
+    private double getLongitude(T city) {
+        // Assuming the City class has a 'getLongitude' method
+        // Modify this according to your City class implementation
+        return ((City) city).getLongitude();
+    }
+
+    private static double calculateDistance(City city1, City city2) {
+        double earthRadius = 6371; // Radius of the Earth in kilometers
+
+        double latitude1 = Math.toRadians(city1.getLatitude());
+        double longitude1 = Math.toRadians(city1.getLongitude());
+        double latitude2 = Math.toRadians(city2.getLatitude());
+        double longitude2 = Math.toRadians(city2.getLongitude());
+
+        double deltaLatitude = latitude2 - latitude1;
+        double deltaLongitude = longitude2 - longitude1;
+
+        double a = Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2)
+                + Math.cos(latitude1) * Math.cos(latitude2)
+                * Math.sin(deltaLongitude / 2) * Math.sin(deltaLongitude / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double distance = earthRadius * c;
+        return distance;
+    }
+
+    public boolean isInMSLL(String searchKey) {
+        MSLLNode<T> current = head;
+        while (current != null) {
+            if (current.getKey().equals(searchKey)) {
+                return true;
+            }
+            current = current.getNext();
+        }
+        return false;
+    }
+    
+
+        
+}
