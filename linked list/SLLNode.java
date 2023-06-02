@@ -1,27 +1,26 @@
-class MSLLNode<T> {
-private String key;
-private SLL<T> list;
-private MSLLNode<T> next;
-public MSLLNode(String key, SLL<T> list, MSLLNode<T> next) {
-    this.key = key;
-    this.list = list;
-    this.next = next;
-}
 
-public String getKey() {
-    return key;
-}
+public class SLLNode<T> {
+    private T data;
+    private SLLNode<T> next;
 
-public SLL<T> getList() {
-    return list;
-}
+    public SLLNode(T data) {
+        this.data = data;
+        this.next = null;
+    }
 
-public MSLLNode<T> getNext() {
-    return next;
-}
+    public T getData() {
+        return data;
+    }
 
-public void setNext(MSLLNode<T> next) {
-    this.next = next;
-}
+    public void setData(T data) {
+        this.data = data;
+    }
 
+    public SLLNode<T> getNext() {
+        return next;
+    }
+
+    public void setNext(SLLNode<T> next) {
+        this.next = next;
+    }
 }
