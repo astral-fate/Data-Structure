@@ -1,4 +1,3 @@
-
 public class MSLLNode<T> {
     private String key;
     private SLL<T> list;
@@ -12,10 +11,6 @@ public class MSLLNode<T> {
 
     public String getKey() {
         return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     public SLL<T> getList() {
@@ -34,4 +29,3 @@ public class MSLLNode<T> {
         this.next = next;
     }
 }
-
