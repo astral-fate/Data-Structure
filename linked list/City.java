@@ -2,9 +2,27 @@ import java.util.Scanner;
 
 public class City {
        
-    private String cityName;
+   private String cityName;
     private double latitude;
     private double longitude;
+    private String name;
+    private Coordinate coordinate;
+
+    public City(String name, Coordinate coordinate) {
+        this.name = name;
+        this.coordinate = coordinate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Coordinate getCoordinate() {
+        return coordinate;
+    }
+
+
+ 
 
     public City(String cityName, double latitude, double longitude) {
         this.cityName = cityName;
@@ -24,5 +42,7 @@ public class City {
     public double getLongitude() {
         return longitude;
     }
+
+ 
     
 }
