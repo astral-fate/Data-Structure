@@ -1,17 +1,19 @@
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
         MSLL<String> msll = new MSLL<>();
-
+        Locale.setDefault(Locale.US);
+        
         msll.addToMSLLHead("A");
         msll.addToMSLLHead("B");
         msll.addToMSLLHead("C");
 
         msll.displayMSLL();
 
-        Scanner scanner = new Scanner(System.in);
+       Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
         int choice = -1;
 
         while (choice != 13) {
@@ -25,11 +27,14 @@ public class Main {
                     String key1 = scanner.next();
                     msll.addToMSLLHead(key1);
                     break;
-                case 2:
-                    System.out.print("Enter key: ");
-                    String key2 = scanner.next();
-                    msll.addToMSLLTail(key2);
-                    break;
+                    case 2:
+                      System.out.print("Enter key: ");
+                      String key2 = scanner.next();
+                      MSLLNode<String> node = new MSLLNode<>(key2, new SLL<>(), null);
+                      msll.addToMSLLTail(node);
+                      break;
+
+
                 case 3:
                     System.out.print("Enter key: ");
                     String key3 = scanner.next();
@@ -98,7 +103,7 @@ public class Main {
 
                     try {
                         double distance = msll.getDistance(city1, city2);
-                        System.out.println("The distance between " + city1 + " and " + city2 + " is " + distance + " km.");
+                        System.out.println("The straight-line distance between " + city1 + " and " + city2 + " is " + distance + " kilometers.");
                     } catch (NullPointerException e) {
                         System.out.println("One or both cities are not in the MSLL.");
                     }
