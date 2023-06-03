@@ -1,11 +1,19 @@
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
-public class MSLL<T> {
+public class MSLL<T>  {
+    
 private MSLLNode<T> head;
 private Scanner scanner;
+private Map<String, Coordinate> cityCoordinates; 
+Map<String, City> cities = new HashMap<>();
+   
 public MSLL() {
     this.head = null;
     this.scanner = new Scanner(System.in);
+    this.cityCoordinates = new HashMap<>();
+    
 }
 
 public MSLLNode<T> getHead() {
@@ -105,32 +113,6 @@ public void deleteCitySublist(String key) throws IllegalArgumentException {
     throw new IllegalArgumentException("Node with key '" + key + "' does not exist.");
 }
 
-public void displayCitySublist(String key) throws IllegalArgumentException {
-    MSLLNode<T> current = findNode(key);
-    if (current == null) {
-        throw new IllegalArgumentException("Node with key '" + key + "' does not exist.");
-    }
-
-    current.getList().displayList();
-}
-
-public void addCityToSublistAtRear(T city, String sublistKey) throws IllegalArgumentException {
-    MSLLNode<T> sublistNode = findNode(sublistKey);
-    if (sublistNode == null) {
-        throw new IllegalArgumentException("Sublist with key '" + sublistKey + "' does not exist.");
-    }
-
-    sublistNode.getList().addToSLLTail(city);
-}
-
-public void addCityToSublistAtFront(T city, String sublistKey) throws IllegalArgumentException {
-    MSLLNode<T> sublistNode = findNode(sublistKey);
-    if (sublistNode == null) {
-        throw new IllegalArgumentException("Sublist with key '" + sublistKey + "' does not exist.");
-    }
-
-    sublistNode.getList().addToSLLHead(city);
-}
 
 private MSLLNode<T> findNode(String key) {
     MSLLNode<T> current = head;
@@ -142,6 +124,73 @@ private MSLLNode<T> findNode(String key) {
     }
     return null;
 }
+public void displayCitySublist(String key) throws IllegalArgumentException {
+    MSLLNode<T> current = findNode(key);
+    if (current == null) {
+        throw new IllegalArgumentException("Node with key '" + key + "' does not exist.");
+    }
+
+    current.getList().displayList();
+}
+
+
+
+ public void addCityToSublistAtRear(String sublistKey, String city, double latitude, double longitude) throws IllegalArgumentException {
+        MSLLNode<T> sublistNode = findNode(sublistKey);
+        if (sublistNode == null) {
+            throw new IllegalArgumentException("Sublist with key '" + sublistKey + "' does not exist.");
+        }
+        String cityName = null;
+        // Create a new City object with the provided cityName, latitude, and longitude
+        City cityObject = new City(city, latitude, longitude);
+        // Add the city object to the sublist at the rear
+        sublistNode.getList().addToSLLTail((T) cityObject, latitude, longitude);
+       
+         // Store the city coordinates in the cityCoordinates map
+        cityCoordinates.put(city, new Coordinate(latitude, longitude));
+    }
+    
+    
+    
+    
+
+public void addCityToSublistAtPosition(T city, String sublistKey, int position, double latitude, double longitude) {
+    MSLLNode<T> sublistNode = findNode(sublistKey);
+    if (sublistNode == null) {
+        System.out.println("Sublist with key '" + sublistKey + "' does not exist.");
+        return;
+    }
+
+    SLL<T> sublist = sublistNode.getList();
+    if (position < 1 || position > sublist.getSize() + 1) {
+        System.out.println("Invalid position. Position should be between 1 and " + (sublist.getSize() + 1));
+        return;
+    }
+
+    if (position == 1) {
+        sublist.addToSLLHead(city, latitude, longitude);
+    } else if (position == sublist.getSize() + 1) {
+        sublist.addToSLLTail(city, latitude, longitude);
+    } else {
+        SLLNode<T> newNode = new SLLNode<>(city, latitude, longitude);
+        SLLNode<T> prev = sublist.getHead();
+        for (int i = 1; i < position - 1; i++) {
+            prev = prev.getNext();
+        }
+        newNode.setNext(prev.getNext());
+        prev.setNext(newNode);
+        sublist.incrementSize();
+    }
+
+    // Store the city coordinates in the cityCoordinates map
+    cityCoordinates.put((String) city, new Coordinate(latitude, longitude));
+
+    System.out.println("City added to sublist '" + sublistKey + "' at position " + position);
+}
+
+
+
+
 
 public void displayMSLL() {
     MSLLNode<T> current = head;
@@ -152,103 +201,6 @@ public void displayMSLL() {
         System.out.println("--------------------");
         current = current.getNext();
     }
-}
-
-public void runMenu() {
-    int choice = -1;
-
-    while (choice != 13) {
-        displayMenu();
-        System.out.print("Enter your choice: ");
-        choice = scanner.nextInt();
-
-        switch (choice) {
-            case 1:
-                System.out.print("Enter key: ");
-                String key1 = scanner.next();
-                addToMSLLHead(key1);
-                break;
-            case 2:
-                System.out.print("Enter key: ");
-                String key2 = scanner.next();
-                addToMSLLTail(key2);
-                break;
-            case 3:
-                System.out.print("Enter key: ");
-                String key3 = scanner.next();
-                deleteFromMSLL(key3);
-                break;
-            case 4:
-                System.out.print("Enter key: ");
-                String key4 = scanner.next();
-                boolean isInList = isInMSLL(key4);
-                System.out.println("Node with key '" + key4 + "' exists in MSLL: " + isInList);
-                break;
-            case 5:
-                System.out.print("Enter key: ");
-                String key5 = scanner.next();
-                makeCitySublistEmpty(key5);
-                break;
-            case 6:
-                System.out.print("Enter key: ");
-                String key6 = scanner.next();
-                deleteCitySublist(key6);
-                break;
-            case 7:
-                System.out.print("Enter key: ");
-                String key7 = scanner.next();
-                displayCitySublist(key7);
-                break;
-            case 8:
-                System.out.print("Enter city name: ");
-                String city8 = scanner.next();
-                addCityToSublistAtRear(null, city8);  // TODO: Pass the city object as an argument
-                break;
-            case 9:
-                System.out.print("Enter sublist key: ");
-                String sublistKey9 = scanner.next();
-                System.out.print("Enter city name: ");
-                String city9 = scanner.next();
-                System.out.print("Enter position: ");
-                int position9 = scanner.nextInt();
-                addCityToSublistAtPosition((T) city9, sublistKey9, position9);
-                break;
-
-            case 10:
-                System.out.print("Enter city name: ");
-                String city10 = scanner.next();
-                deleteCityFromSublist(city10);
-                break;
-            case 11:
-                System.out.print("Enter latitude of city 1: ");
-                double latitude1 = scanner.nextDouble();
-                System.out.print("Enter longitude of city 1: ");
-                double longitude1 = scanner.nextDouble();
-                System.out.print("Enter latitude of city 2: ");
-                double latitude2 = scanner.nextDouble();
-                System.out.print("Enter longitude of city 2: ");
-                double longitude2 = scanner.nextDouble();
-                double distance = getDistance(latitude1, longitude1, latitude2, longitude2);
-                System.out.println("Distance between cities: " + distance + " km");
-                break;
-            case 12:
-                System.out.print("Enter city name: ");
-                String city12 = scanner.next();
-                boolean cityFound = searchForCity(city12);
-                System.out.println("City " + city12 + " found: " + cityFound);
-                break;
-            case 13:
-                System.out.println("Exiting the program.");
-                break;
-            default:
-                System.out.println("Invalid choice. Please try again.");
-                break;
-        }
-
-        System.out.println();
-    }
-
-    scanner.close();
 }
 
 private boolean searchForCity(String city12) {
@@ -262,74 +214,74 @@ private boolean searchForCity(String city12) {
     return false;
 }
 
-private double getDistance(double lat1, double lon1, double lat2, double lon2) {
-    int R = 6371; // Radius of the earth in kilometers
-    double latDistance = Math.toRadians(lat2 - lat1);
-    double lonDistance = Math.toRadians(lon2 - lon1);
-    double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-            + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-            * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    double distance = R * c;
-    return distance;
-}
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        double r = 6372.8; // radius of the Earth in kilometers
 
-private void deleteCityFromSublist(String city10) {
+        double phi1 = Math.toRadians(lat1);
+        double phi2 = Math.toRadians(lat2);
+        double deltaPhi = Math.toRadians(lat2 - lat1);
+        double deltaLambda = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2)
+                + Math.cos(phi1) * Math.cos(phi2) * Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return r * c;
+    }
+
+   public double getDistance(String city1, String city2) throws IllegalArgumentException {
+        double earthRadius = 6371; // Radius of the Earth in kilometers 
+       double latitude1 = getLatitude(city1);
+        double longitude1 = getLongitude(city1);
+        double latitude2 = getLatitude(city2);
+        double longitude2 = getLongitude(city2);
+
+        // Calculate the distance between the two cities using the Haversine formula
+            // Calculate the differences between the coordinates
+        double dLat = latitude2 - latitude1;
+        double dLon = longitude2 - longitude1;
+
+        // Calculate the distance using the Haversine formula
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                   Math.cos(latitude1) * Math.cos(latitude2) *
+                   Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = earthRadius * c;
+        
+        
+        distance = calculateDistance(latitude1, longitude1, latitude2, longitude2);
+        return distance;
+    }
+   
+
+void deleteCityFromSublist(String city10) {
     MSLLNode<T> current = head;
     while (current != null) {
+        // i did some casting here
         current.getList().deleteFromSLL(city10);
         current = current.getNext();
     }
 }
-
-public void addCityToSublistAtPosition(T city, String sublistKey, int position) {
-    MSLLNode<T> sublistNode = findNode(sublistKey);
-    if (sublistNode == null) {
-        System.out.println("Sublist with key '" + sublistKey + "' does not exist.");
-        return;
-    }
-
-    SLL<T> sublist = sublistNode.getList();
-    if (position < 1 || position > sublist.getSize() + 1) {
-        System.out.println("Invalid position. Position should be between 1 and " + (sublist.getSize() + 1));
-        return;
-    }
-
-    // Create a new city object or modify the code to pass an actual city object
-
-    if (position == 1) {
-        sublist.addToSLLHead(city);
-    } else if (position == sublist.getSize() + 1) {
-        sublist.addToSLLTail(city);
-    } else {
-        SLLNode<T> newNode = new SLLNode<>(city);
-        SLLNode<T> prev = sublist.getHead();
-        for (int i = 1; i < position - 1; i++) {
-            prev = prev.getNext();
+    
+    public double getLatitude(String cityName) throws IllegalArgumentException {
+        Coordinate coordinate = cityCoordinates.get(cityName);
+        if (coordinate != null) {
+            return coordinate.getLatitude();
         }
-        newNode.setNext(prev.getNext());
-        prev.setNext(newNode);
-        sublist.incrementSize();
+        throw new IllegalArgumentException("City '" + cityName + "' does not exist.");
     }
 
-    System.out.println("City added to sublist '" + sublistKey + "' at position " + position);
-}
+    public double getLongitude(String cityName) throws IllegalArgumentException {
+        Coordinate coordinate = cityCoordinates.get(cityName);
+        if (coordinate != null) {
+            return coordinate.getLongitude();
+        }
+        throw new IllegalArgumentException("City '" + cityName + "' does not exist.");
+    }
 
-private void displayMenu() {
-    System.out.println("Menu:");
-    System.out.println("1. Add node to MSLL head");
-    System.out.println("2. Add node to MSLL tail");
-    System.out.println("3. Delete node from MSLL");
-    System.out.println("4. Check if node exists in MSLL");
-    System.out.println("5. Make city sublist empty");
-    System.out.println("6. Delete city sublist");
-    System.out.println("7. Display city sublist");
-    System.out.println("8. Add city to sublist at rear");
-    System.out.println("9. Add city to sublist at position");
-    System.out.println("10. Delete city from sublist");
-    System.out.println("11. Calculate distance between two cities");
-    System.out.println("12. Search for city");
-    System.out.println("13. Exit");
-}
 
 }
+
+
+
+
