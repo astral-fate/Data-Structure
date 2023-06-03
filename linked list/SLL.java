@@ -112,6 +112,19 @@ public class SLL<T> {
     private void decrementSize() {
         size--;
     }
+    
+    public boolean contains(String cityName) {
+    SLLNode<T> currentNode = head;
+    while (currentNode != null) {
+        City city = (City) currentNode.getElement();
+        if (city.getName().equalsIgnoreCase(cityName)) {
+            return true;
+        }
+        currentNode = currentNode.getNext();
+    }
+    return false;
+}
+
 
     public void addToSLLTail(T element, double latitude, double longitude) {
         SLLNode<T> newNode = new SLLNode<>(element, latitude, longitude);
@@ -126,4 +139,6 @@ public class SLL<T> {
         }
         size++;
     }
+
+ 
 }
