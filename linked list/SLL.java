@@ -22,6 +22,20 @@ public class SLL<T> {
         incrementSize();
     }
 
+    public void addToSLLTail(T element, double latitude, double longitude) {
+        SLLNode<T> newNode = new SLLNode<>(element, latitude, longitude);
+        if (head == null) {
+            head = newNode;
+        } else {
+            SLLNode<T> current = head;
+            while (current.getNext() != null) {
+                current = current.getNext();
+            }
+            current.setNext(newNode);
+        }
+        incrementSize();
+    }
+
     public void addToSLLPosition(T city, double latitude, double longitude, int position) {
         if (position < 1 || position > size + 1) {
             System.out.println("Invalid position. Position should be between 1 and " + (size + 1));
@@ -112,33 +126,17 @@ public class SLL<T> {
     private void decrementSize() {
         size--;
     }
-    
-    public boolean contains(String cityName) {
-    SLLNode<T> currentNode = head;
-    while (currentNode != null) {
-        City city = (City) currentNode.getElement();
-        if (city.getName().equalsIgnoreCase(cityName)) {
-            return true;
-        }
-        currentNode = currentNode.getNext();
-    }
-    return false;
-}
 
-
-    public void addToSLLTail(T element, double latitude, double longitude) {
-        SLLNode<T> newNode = new SLLNode<>(element, latitude, longitude);
-        if (head == null) {
-            head = newNode;
-        } else {
-            SLLNode<T> current = head;
-            while (current.getNext() != null) {
-                current = current.getNext();
+        public boolean contains(String cityName) {
+            SLLNode<T> currentNode = head;
+            while (currentNode != null) {
+                City city = (City) currentNode.getElement();
+                if (city != null && city.getName().equalsIgnoreCase(cityName)) {
+                    return true;
+                }
+                currentNode = currentNode.getNext();
             }
-            current.setNext(newNode);
+            return false;
         }
-        size++;
-    }
 
- 
 }
