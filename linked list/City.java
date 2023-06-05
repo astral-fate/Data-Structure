@@ -1,28 +1,7 @@
-import java.util.Scanner;
-
 public class City {
-       
-   private String cityName;
+    private String cityName;
     private double latitude;
     private double longitude;
-    private String name;
-    private Coordinate coordinate;
-
-    public City(String name, Coordinate coordinate) {
-        this.name = name;
-        this.coordinate = coordinate;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Coordinate getCoordinate() {
-        return coordinate;
-    }
-
-
- 
 
     public City(String cityName, double latitude, double longitude) {
         this.cityName = cityName;
@@ -30,8 +9,7 @@ public class City {
         this.longitude = longitude;
     }
 
-    
-        public String getCityName() {
+    public String getCityName() {
         return cityName;
     }
 
@@ -43,6 +21,8 @@ public class City {
         return longitude;
     }
 
- 
-    
+    @Override
+    public String toString() {
+        return cityName + " (" + latitude + ", " + longitude + ")";
+    }
 }
