@@ -88,27 +88,14 @@ public void addToMSLLTail(MSLLNode<T> newNode) throws IllegalArgumentException {
         current.getList().makeEmpty();
     }
 
-    public void deleteCitySublist(String key) throws IllegalArgumentException {
-        if (head == null) {
-            throw new IllegalArgumentException("Node with key '" + key + "' does not exist.");
-        }
-
-        if (head.getKey().equals(key)) {
-            head = head.getNext();
-            return;
-        }
-
-        MSLLNode<T> current = head;
-        while (current.getNext() != null) {
-            if (current.getNext().getKey().equals(key)) {
-                current.setNext(current.getNext().getNext());
-                return;
-            }
-            current = current.getNext();
-        }
-
+ public void deleteCitySublist(String key) throws IllegalArgumentException {
+    MSLLNode<T> current = findNode(key);
+    if (current == null) {
         throw new IllegalArgumentException("Node with key '" + key + "' does not exist.");
     }
+
+    current.setList(new SLL<>());
+}
 
     private MSLLNode<T> findNode(String key) {
         MSLLNode<T> current = head;
@@ -142,7 +129,7 @@ public void addToMSLLTail(MSLLNode<T> newNode) throws IllegalArgumentException {
     }
 
 
-public void addCityToSublistAtRear(String sublistKey, String city, double latitude, double longitude) throws IllegalArgumentException {
+public void addCityToSublistAtRear(String sublistKey, String cityName, double latitude, double longitude) throws IllegalArgumentException {
     MSLLNode<T> sublistNode = findNode(sublistKey);
     if (sublistNode == null) {
         // Create a new sublist if it doesn't exist
@@ -151,10 +138,10 @@ public void addCityToSublistAtRear(String sublistKey, String city, double latitu
         addToMSLLTail(sublistNode);
     }
 
-    String cityName = city.toLowerCase(); // Convert the city name to lowercase
+    String cityNameLower = cityName.toLowerCase(); // Convert the city name to lowercase
     // Check if the city already exists in the sublist
-    if (sublistNode.getList().contains(cityName)) {
-        throw new IllegalArgumentException("City '" + city + "' already exists in sublist '" + sublistKey + "'.");
+    if (sublistNode.getList().contains(cityNameLower)) {
+        throw new IllegalArgumentException("City '" + cityName + "' already exists in sublist '" + sublistKey + "'.");
     }
 
     // Create a new City object with the provided cityName, latitude, and longitude
@@ -163,7 +150,7 @@ public void addCityToSublistAtRear(String sublistKey, String city, double latitu
     sublistNode.getList().addToSLLTail((T) cityObject, latitude, longitude);
 
     // Store the city coordinates in the cityCoordinates map
-    cityCoordinates.put(cityName, new Coordinate(latitude, longitude));
+    cityCoordinates.put(cityNameLower, new Coordinate(latitude, longitude));
 }
 
   
